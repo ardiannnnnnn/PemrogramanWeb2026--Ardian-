@@ -31,7 +31,7 @@ header {
     justify-content: space-between;
     flex-wrap: wrap;
 }
-
+.nav-toggle:checked ~ nav
 header h1 {
     font-size: 1.4rem;
 }
@@ -189,6 +189,10 @@ footer {
 
 /* ===== Tabel Responsif ===== */
 .table-responsive {
+    overflow-x: auto;
+}
+
+pre {
     overflow-x: auto;
 }
 
