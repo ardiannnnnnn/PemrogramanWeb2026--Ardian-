@@ -21,7 +21,6 @@ a:hover {
     text-decoration: underline;
 }
 
-/* ===== Header & Navbar (Flexbox) ===== */
 header {
     background-color: #1d5b8a;
     color: #fff;
@@ -30,16 +29,40 @@ header {
     align-items: center;
     justify-content: space-between;
     flex-wrap: wrap;
+    position: relative;
 }
-.nav-toggle:checked ~ nav
+
 header h1 {
     font-size: 1.4rem;
+}
+
+.nav-toggle {
+    display: none;
+}
+
+.nav-toggle-label {
+    display: block; /* tombol hamburger terlihat di mobile */
+    font-size: 1.6rem;
+    color: #fff;
+    cursor: pointer;
+}
+
+header nav {
+    display: none; /* menu tersembunyi sampai di-toggle */
+    width: 100%;
+    order: 3;
+    margin-top: 1rem;
+}
+
+.nav-toggle:checked ~ nav {
+    display: block;
 }
 
 header nav ul {
     list-style: none;
     display: flex;
-    gap: 1.25rem;
+    flex-direction: column; /* menu vertikal di mobile */
+    gap: 0.75rem;
 }
 
 header nav a {
@@ -52,12 +75,6 @@ main {
     max-width: 1000px;
     margin: 2rem auto;
     padding: 0 1.5rem;
-}
-
-@media (min-width: 1400px) {
-    main {
-        max-width: 1300px;
-    }
 }
 
 section {
@@ -73,10 +90,11 @@ section h2 {
     color: #1d5b8a;
 }
 
-/* ===== Kartu Statistik (CSS Grid) ===== */
+/* ===== Kartu Statistik (CSS Grid) =====
+   Default mobile: 1 kolom, ditumpuk ke bawah. */
 main section:nth-of-type(2) {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: 1fr;
     gap: 1rem;
 }
 
@@ -99,7 +117,16 @@ main section:nth-of-type(2) article p {
     color: #1d5b8a;
 }
 
-/* ===== Tabel ===== */
+/* ===== Tabel =====
+   Default mobile: dibungkus .table-responsive agar bisa discroll. */
+.table-responsive {
+    overflow-x: auto;
+}
+
+pre {
+    overflow-x: auto;
+}
+
 table {
     width: 100%;
     border-collapse: collapse;
@@ -143,7 +170,8 @@ td button:last-of-type {
     color: #fff;
 }
 
-/* ===== Form ===== */
+/* ===== Form =====
+   Default mobile: input selebar kontainer (full width). */
 form p {
     margin-bottom: 1rem;
 }
@@ -158,7 +186,7 @@ form label {
 form input,
 form select {
     width: 100%;
-    max-width: 400px;
+    max-width: 100%;
     padding: 0.55rem 0.7rem;
     border: 1px solid #cdd4da;
     border-radius: 4px;
@@ -187,69 +215,48 @@ footer {
     font-size: 0.9rem;
 }
 
-/* ===== Tabel Responsif ===== */
-.table-responsive {
-    overflow-x: auto;
-}
+/* =========================================================
+   PROGRESSIVE ENHANCEMENT — mulai dari layar kecil ke besar
+   ========================================================= */
 
-pre {
-    overflow-x: auto;
-}
-
-/* ===== Hamburger Menu (checkbox hack) ===== */
-.nav-toggle {
-    display: none;
-}
-
-.nav-toggle-label {
-    display: none;
-    font-size: 1.6rem;
-    color: #fff;
-    cursor: pointer;
-}
-
-/* ===== Responsive Breakpoints ===== */
-
-/* Tablet ke bawah */
-@media (min-width: 900px) {
-    main section:nth-of-type(2) {
-        grid-template-columns: repeat(2, 1fr);
-        background-color: #7a8794;
-    }
-}
-
-/* Mobile */
-@media (max-width: 480px) {
-    header {
-        position: relative;
-    }
-
+/* ~Tablet kecil: nav penuh mulai muat sejajar, form boleh dibatasi lebar */
+@media (min-width: 600px) {
     .nav-toggle-label {
-        display: block;
+        display: none; /* hamburger tidak dibutuhkan lagi */
     }
 
     header nav {
-        display: none;
-        width: 100%;
-        order: 3;
-        margin-top: 1rem;
-    }
-
-    .nav-toggle:checked ~ nav {
-        display: block;
+        display: block; /* nav selalu tampil */
+        width: auto;
+        order: initial;
+        margin-top: 0;
     }
 
     header nav ul {
-        flex-direction: column;
-        gap: 0.75rem;
+        flex-direction: row; /* menu horizontal */
+        gap: 1.25rem;
     }
 
     main section:nth-of-type(2) {
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(2, 1fr); /* kartu jadi 2 kolom */
     }
 
     form input,
     form select {
-        max-width: 100%;
+        max-width: 400px; /* input tidak lagi selebar layar */
+    }
+}
+
+/* ~Desktop: ruang cukup untuk 3 kolom kartu statistik */
+@media (min-width: 900px) {
+    main section:nth-of-type(2) {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+/* ~Layar lebar: beri main lebih banyak ruang */
+@media (min-width: 1400px) {
+    main {
+        max-width: 1300px;
     }
 }
