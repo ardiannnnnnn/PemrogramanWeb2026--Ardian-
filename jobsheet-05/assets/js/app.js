@@ -9,7 +9,6 @@ function initNavToggle() {
     });
 }
 
-// ===== Konfirmasi hapus (front-end only, belum ke server) =====
 function initHapusConfirm() {
     document.querySelectorAll(".btn-hapus").forEach(function (btn) {
         btn.addEventListener("click", function () {
@@ -18,12 +17,29 @@ function initHapusConfirm() {
             const yakin = confirm("Yakin ingin menghapus \"" + nama + "\"?");
             if (yakin && row) {
                 row.remove();
+                updateCounter();
             }
         });
     });
 }
+//jobsheet 5 no 4
+function updateCounter() {
+    const table = document.querySelector(".table-responsive table");
+    if (!table) return;
 
-// ===== Filter/pencarian tabel real-time =====
+    const rows = table.querySelectorAll("tbody tr");
+    const visibleRows = Array.from(rows).filter(function (row) {
+        return row.style.display !== "none";
+    });
+
+    const counterElem = document.querySelector("#counter-info");
+    if (counterElem) {
+        counterElem.textContent =
+            "Menampilkan " + visibleRows.length + " dari " + rows.length + " buku";
+    }
+}
+
+// ===== Filter/pencarian tabel real-time (kolom Judul saja) =====
 function initTableFilter() {
     const input = document.getElementById("search-input");
     const table = document.querySelector(".table-responsive table");
@@ -33,9 +49,10 @@ function initTableFilter() {
         const keyword = input.value.toLowerCase();
         const rows = table.querySelectorAll("tbody tr");
         rows.forEach(function (row) {
-            const teks = row.textContent.toLowerCase();
-            row.style.display = teks.includes(keyword) ? "" : "none";
+            const judul = row.querySelector("td")?.textContent.toLowerCase() || "";
+            row.style.display = judul.includes(keyword) ? "" : "none";
         });
+        updateCounter();
     });
 }
 
@@ -99,15 +116,17 @@ function initValidasiForm() {
                 hapusError(stok);
             }
         }
-        // Jobsheet 5 no 1
-        const isbnInput = document.querySelector('#isbn');
-        const isbnPattern = /^[0-9-]+$/; 
 
-        if (isbnInput && isbnInput.value.trim() !== '') {
+        const isbnInput = form.querySelector("[name='isbn']");
+        const isbnPattern = /^[0-9-]+$/;
+        if (isbnInput && isbnInput.value.trim() !== "") {
             if (!isbnPattern.test(isbnInput.value.trim())) {
-            tampilkanError(isbnInput, 'ISBN hanya boleh berisi angka dan tanda hubung');
+                tampilkanError(isbnInput, "ISBN hanya boleh berisi angka dan tanda hubung.");
+                valid = false;
+            } else {
+                hapusError(isbnInput);
             }
-        }   
+        }
 
         if (!valid) {
             e.preventDefault();
@@ -120,4 +139,5 @@ document.addEventListener("DOMContentLoaded", function () {
     initHapusConfirm();
     initTableFilter();
     initValidasiForm();
+    updateCounter();
 });
