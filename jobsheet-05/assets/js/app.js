@@ -72,6 +72,7 @@ function hapusError(input) {
     }
 }
 
+//jobsheet 5 no 5 
 function initValidasiForm() {
     const form = document.getElementById("form-tambah");
     if (!form) return;
@@ -79,22 +80,25 @@ function initValidasiForm() {
     form.addEventListener("submit", function (e) {
         let valid = true;
 
-        const judul = form.querySelector("[name='judul'], [name='nama']");
-        if (judul && judul.value.trim() === "") {
-            tampilkanError(judul, "Field ini wajib diisi.");
-            valid = false;
-        } else if (judul) {
-            hapusError(judul);
-        }
+        // 1. DAFTAR FIELD WAJIB DIISI 
+        const requiredFields = ["judul", "pengarang"];
 
-        const pengarang = form.querySelector("[name='pengarang']");
-        if (pengarang && pengarang.value.trim() === "") {
-            tampilkanError(pengarang, "Pengarang wajib diisi.");
-            valid = false;
-        } else if (pengarang) {
-            hapusError(pengarang);
-        }
+        // 2. PERULANGAN FOREACH 
+        requiredFields.forEach(function (fieldName) {
+            // Khusus field judul, mendukung name="judul" atau name="nama"
+            const input = form.querySelector(`[name='${fieldName}'], [name='nama']`);
+            
+            if (input) {
+                if (input.value.trim() === "") {
+                    tampilkanError(input, `${fieldName.charAt(0).toUpperCase() + fieldName.slice(1)} wajib diisi.`);
+                    valid = false;
+                } else {
+                    hapusError(input);
+                }
+            }
+        });
 
+        // 3. VALIDASI KHUSUS DENGAN ATURAN ANGKA 
         const tahun = form.querySelector("[name='tahun']");
         if (tahun) {
             const nilai = parseInt(tahun.value, 10);
@@ -117,14 +121,15 @@ function initValidasiForm() {
             }
         }
 
-        const isbnInput = form.querySelector("[name='isbn']");
-        const isbnPattern = /^[0-9-]+$/;
-        if (isbnInput && isbnInput.value.trim() !== "") {
-            if (!isbnPattern.test(isbnInput.value.trim())) {
-                tampilkanError(isbnInput, "ISBN hanya boleh berisi angka dan tanda hubung.");
+        // Validasi ISBN jika ada (dari latihan No. 1)
+        const isbn = form.querySelector("[name='isbn']");
+        if (isbn && isbn.value.trim() !== "") {
+            const patternIsbn = /^[0-9-]+$/;
+            if (!patternIsbn.test(isbn.value.trim())) {
+                tampilkanError(isbn, "ISBN hanya boleh berisi angka dan tanda hubung (-).");
                 valid = false;
             } else {
-                hapusError(isbnInput);
+                hapusError(isbn);
             }
         }
 
