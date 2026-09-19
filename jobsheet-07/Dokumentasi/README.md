@@ -1,95 +1,84 @@
-# Dokumentasi Jobsheet 7 — PHP Dasar & Form Handling
+# Dokumentasi Jobsheet 8 — Koneksi PostgreSQL
 
 Dokumentasi ini melanjutkan
-[dokumentasi jobsheet-06](../../jobsheet-06/Dokumentasi/README.md)
-(Fetch API & JSON). Jobsheet-07 adalah **titik paling besar** dalam
-perjalanan SIMPUS-Mini sejauh ini: aplikasi berpindah dari yang
-sepenuhnya berjalan di **browser** (HTML/CSS/JS statis) menjadi
-aplikasi yang punya **server sungguhan** di baliknya, memakai **PHP**.
+[dokumentasi jobsheet-07](../../jobsheet-07/Dokumentasi/README.md)
+(PHP Dasar & Form Handling). Jobsheet-08 menutup satu "lubang" penting
+yang sudah disinggung berkali-kali di dokumentasi sebelumnya: data yang
+**benar-benar tersimpan**, tidak hilang begitu sesi browser berakhir.
 
 ## Tentang `docs/wireframe.md`
 
 File ini **identik persis** dengan
-[`docs/wireframe.md` di jobsheet-06](../../jobsheet-06/docs/wireframe.md) —
-tidak ada rancangan UI/UX baru di jobsheet ini. Baca
-[dokumentasi jobsheet-04](../../jobsheet-04/Dokumentasi/README.md) kalau
-perlu menyegarkan ingatan soal wireframe & user flow.
+[`docs/wireframe.md` di jobsheet-07](../../jobsheet-07/docs/wireframe.md) —
+tidak ada rancangan UI/UX baru di jobsheet ini.
 
-## Kenapa Ini Perubahan Besar?
+## Kenapa Ini Penting?
 
-Semua jobsheet sebelumnya (01-06) bisa dijalankan hanya dengan
-**membuka file di browser** — bahkan jobsheet-06 yang butuh server lokal
-pun sebenarnya server itu hanya untuk melayani file statis (HTML, CSS,
-JS, JSON) apa adanya, tanpa mengolah apa pun. Di jobsheet-07, untuk
-**pertama kalinya**, ada kode yang benar-benar **dijalankan di server**
-sebelum halaman dikirim ke browser: PHP memproses data, mengambil
-keputusan (misalnya "apakah form ini valid?"), dan **menghasilkan**
-HTML yang berbeda-beda tergantung situasinya (misalnya menampilkan
-pesan error atau tidak) — bukan sekadar mengirim file HTML yang sudah
-jadi apa adanya seperti jobsheet-jobsheet sebelumnya.
+Ingat catatan yang sudah berulang kali muncul sejak
+[dokumentasi jobsheet-07 §3.5](../../jobsheet-07/Dokumentasi/03-session-dan-alur-data.md#35-kenapa-data-ini-sementara):
+data di `$_SESSION` **hilang** begitu sesi browser berakhir. Jobsheet-08
+mengganti sumber data dari `$_SESSION` menjadi **database PostgreSQL**
+sungguhan — data yang kamu tambahkan sekarang akan **tetap ada**
+meskipun kamu menutup browser, mematikan komputer, atau kembali lagi
+besok.
 
-## Apa yang Baru di Jobsheet 7?
+## Apa yang Baru di Jobsheet 8?
 
 Sesuai [README.md](../README.md) jobsheet ini:
 
-1. Semua halaman `.html` diubah jadi **`.php`**.
-2. Dua file baru, `includes/header.php` dan `includes/footer.php`,
-   menghindari duplikasi navbar/footer lewat `include`.
-3. Path CSS/JS/menu di `includes/header.php`/`footer.php` dihitung
-   **relatif otomatis** lewat variabel `$base` (lihat
-   [bab 2 §2.3](02-includes-header-footer.md#23-path-relatif-otomatis-di-includesheaderphp)),
-   supaya tetap benar dipakai bersama oleh halaman di kedalaman folder
-   yang berbeda-beda.
-4. Form Tambah Buku/Anggota kini benar-benar **mengirim data** ke
-   `proses_tambah.php` (bukan lagi form kosong tanpa `action` seperti
-   sejak jobsheet-01).
-5. `proses_tambah.php` memvalidasi data di **server**, menyimpannya ke
-   `$_SESSION`, lalu redirect ke halaman daftar.
-6. `list.php` merender tabel dari `$_SESSION`, menggantikan pendekatan
-   `fetch`/JSON di jobsheet-06.
-7. **Flash message** — pesan sukses/gagal yang muncul sekali setelah
-   redirect.
-8. `assets/js/buku.js`, `assets/js/anggota.js`, dan folder `data/` dari
-   jobsheet-06 **dihapus** — tidak dibutuhkan lagi karena rendering
-   sudah pindah ke server.
+1. **`sql/01_buku_anggota.sql`** — skema database: perintah SQL untuk
+   membuat tabel `buku` dan `anggota`.
+2. **`includes/koneksi.php`** — kode PHP yang menghubungkan aplikasi ke
+   database PostgreSQL, memakai **PDO**.
+3. **`proses_tambah.php`** (buku & anggota) — `$_SESSION['buku'][] = ...`
+   dari jobsheet-07 diganti `INSERT ... RETURNING id` lewat **prepared
+   statement**.
+4. **`list.php`** (buku & anggota) — sumber data diganti dari
+   `$_SESSION` menjadi `SELECT * FROM ... ORDER BY id DESC`.
+5. **`index.php`** — kartu statistik Total Buku/Anggota sekarang
+   `SELECT COUNT(*)` dari database sungguhan, bukan lagi dummy/session.
 
 ## Daftar Isi
 
-1. [Konsep Dasar PHP](01-konsep-dasar-php.md)
-2. [`includes/header.php` & `includes/footer.php`](02-includes-header-footer.md)
-3. [Session & Alur Data](03-session-dan-alur-data.md)
-4. [Memproses Form: `proses_tambah.php`](04-proses-tambah-validasi-server.md)
-5. [Menampilkan Data: `list.php` & Flash Message](05-list-php-render-dan-flash.md)
-6. [CSS: Gaya Flash Message](06-css-flash-message.md)
+1. [Konsep Dasar Database & SQL](01-konsep-dasar-database-sql.md)
+2. [Skema Database: `01_buku_anggota.sql`](02-skema-database-sql.md)
+3. [Persiapan Database Sebelum Menjalankan](03-persiapan-database.md)
+4. [Koneksi PHP ke Database: `koneksi.php`](04-koneksi-pdo.md)
+5. [Menyimpan Data: Prepared Statement & `INSERT`](05-insert-prepared-statement.md)
+6. [Membaca Data: `SELECT`](06-membaca-data-select.md)
 7. [Rangkuman & Latihan Lanjutan](07-rangkuman-latihan.md)
+8. [Lampiran: Instalasi PostgreSQL di Laragon (Windows)](08-instalasi-postgresql-laragon.md)
 
 ## Struktur Folder
 
 ```
-jobsheet-07/
-├── index.php                   # Beranda, kini file PHP
+jobsheet-08/
+├── index.php                      # Kartu statistik dari SELECT COUNT(*)
 ├── includes/
-│   ├── header.php               # BARU — bagian atas HTML + navbar, dipakai ulang
-│   └── footer.php               # BARU — bagian bawah HTML + footer, dipakai ulang
-├── assets/
-│   ├── css/style.css            # Ditambah gaya .flash
-│   └── js/app.js                 # Tidak berubah dari jobsheet-06
+│   ├── header.php, footer.php      # Tidak berubah dari jobsheet-07
+│   └── koneksi.php                  # BARU — koneksi PDO ke PostgreSQL
+├── sql/
+│   └── 01_buku_anggota.sql          # BARU — skema tabel buku & anggota
 ├── buku/
-│   ├── list.php                  # Render dari $_SESSION, bukan lagi fetch/JSON
-│   ├── tambah.php                # Form kini punya method="post" & action
-│   └── proses_tambah.php         # BARU — validasi server + simpan ke $_SESSION
+│   ├── list.php                     # SELECT * FROM buku, bukan $_SESSION
+│   ├── tambah.php                   # Tidak berubah dari jobsheet-07
+│   └── proses_tambah.php            # INSERT via prepared statement
 ├── anggota/
 │   ├── list.php
 │   ├── tambah.php
-│   └── proses_tambah.php         # BARU
-├── docs/wireframe.md              # Identik dengan jobsheet-06
+│   └── proses_tambah.php            # INSERT via prepared statement
+├── docs/wireframe.md                 # Identik dengan jobsheet-07
 ├── README.md
-└── Dokumentasi/                   # Folder dokumentasi ini
+└── Dokumentasi/                      # Folder dokumentasi ini
 ```
 
-**Catatan penting** dari [README.md](../README.md) jobsheet ini yang
-perlu diingat sejak awal: data yang disimpan di `$_SESSION` **akan
-hilang** begitu sesi browser berakhir (menutup browser, atau sesi
-kedaluwarsa) — ini jembatan **sementara** menuju penyimpanan
-sungguhan. Mulai Jobsheet 8, data akan dipindah ke database PostgreSQL
-supaya benar-benar tersimpan permanen.
+**Catatan penting** dari [README.md](../README.md) jobsheet ini:
+
+- Query di sini memakai **prepared statement** (`:nama_parameter`),
+  bukan menggabung string mentah — ini fondasi keamanan yang akan
+  diperdalam di Jobsheet 11.
+- Kolom `id` sudah ikut ter-fetch lewat `SELECT *`, meski belum dipakai
+  di tampilan — akan dipakai untuk tautan Edit/Hapus mulai Jobsheet 9.
+- **Jobsheet ini butuh persiapan tambahan** (menginstal/menjalankan
+  PostgreSQL, membuat database) sebelum bisa dicoba — dibahas lengkap
+  di [bab 3](03-persiapan-database.md).
