@@ -1,0 +1,18 @@
+[
+  {
+    "id": 1,
+    "judul": "Pemrograman Web dengan JavaScript",
+    "pengarang": "Budi Raharjo",
+    "kategori": "Pemrograman",
+    "tahun": 2023,
+    "stok": 5
+  },
+  {
+    "id": 2,
+    "judul": "Belajar HTML & CSS",
+    "pengarang": "Ahmad Yani",
+    "kategori": "Desain Web",
+    "tahun": 2022,
+    "stok": 3
+  }
+]
